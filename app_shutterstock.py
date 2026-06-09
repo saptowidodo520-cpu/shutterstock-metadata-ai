@@ -23,7 +23,7 @@ if API_KEY:
                     client = genai.Client(api_key=API_KEY.strip())
                     
                     response = client.models.generate_content(
-                        model='gemini-1.5-flash',
+                        model='gemini-2.5-flash',
                         contents=["Respond with exactly one word: Success", Image.open(file)]
                     )
                     st.success(f"🎉 LUAR BIASA BERHASIL! Respon Google: {response.text}")
