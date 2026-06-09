@@ -9,12 +9,16 @@ st.set_page_config(page_title="Stock Metadata AI", layout="centered")
 st.title("📸 Stock Metadata AI")
 st.caption("Generator Deskripsi & Keyword Otomatis untuk Shutterstock")
 
+# Sistem Keamanan: Mengambil API Key murni dari Brankas Secrets Streamlit Cloud
 if "GEMINI_API_KEY" in st.secrets:
     API_KEY = st.secrets["GEMINI_API_KEY"]
 else:
     API_KEY = st.sidebar.text_input("Masukkan Gemini API Key:", type="password")
 
 if API_KEY:
+    # 🔍 FITUR DETEKSI: Menampilkan potongan kunci yang sedang aktif di sistem
+    st.info(f"🔑 Kunci Aktif di Sistem: `{API_KEY[:6]}...{API_KEY[-4:] if len(API_KEY) > 4 else ''}`")
+
     # Pilih Tipe Media
     option = st.radio("Pilih Tipe Media:", ["Gambar", "Video"])
     
@@ -32,7 +36,7 @@ if API_KEY:
         if st.button("🚀 Generate Metadata"):
             with st.spinner("AI sedang menganalisis konten..."):
                 try:
-                    # Menggunakan Client SDK Terbaru
+                    # Menggunakan Client SDK Terbaru dengan pembersihan spasi
                     client = genai.Client(api_key=API_KEY.strip())
                     
                     prompt = """
