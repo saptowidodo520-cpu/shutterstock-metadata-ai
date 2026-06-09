@@ -9,7 +9,6 @@ st.set_page_config(page_title="Stock Metadata AI", layout="centered")
 st.title("📸 Stock Metadata AI")
 st.caption("Generator Deskripsi & Keyword Otomatis untuk Shutterstock")
 
-# Sistem Keamanan: Mengambil API Key murni dari Brankas Secrets Streamlit Cloud
 if "GEMINI_API_KEY" in st.secrets:
     API_KEY = st.secrets["GEMINI_API_KEY"]
 else:
