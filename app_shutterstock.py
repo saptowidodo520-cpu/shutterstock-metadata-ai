@@ -33,7 +33,7 @@ if API_KEY:
             with st.spinner("AI sedang menganalisis konten..."):
                 try:
                     # Menggunakan Client SDK Terbaru
-                    client = genai.Client(api_key=API_KEY)
+                    client = genai.Client(api_key=API_KEY.strip())
                     
                     prompt = """
                     You are an expert Stock Photography and Video SEO Specialist. 
