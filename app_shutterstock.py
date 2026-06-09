@@ -9,7 +9,7 @@ st.set_page_config(page_title="Stock Metadata AI", layout="centered")
 st.title("📸 Stock Metadata AI")
 st.caption("Generator Deskripsi & Keyword Otomatis untuk Shutterstock")
 
-# Mengambil API Key secara aman dari Brankas Secrets Streamlit
+# Sistem Keamanan: Mengambil API Key murni dari Brankas Secrets Streamlit Cloud
 if "GEMINI_API_KEY" in st.secrets:
     API_KEY = st.secrets["GEMINI_API_KEY"]
 else:
@@ -33,7 +33,7 @@ if API_KEY:
         if st.button("🚀 Generate Metadata"):
             with st.spinner("AI sedang menganalisis konten..."):
                 try:
-                    # Menggunakan Client SDK Baru
+                    # Menggunakan Client SDK Terbaru
                     client = genai.Client(api_key=API_KEY)
                     
                     prompt = """
