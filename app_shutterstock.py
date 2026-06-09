@@ -7,13 +7,12 @@ from PIL import Image
 st.set_page_config(page_title="Stock Metadata AI", layout="centered")
 
 st.title("📸 Stock Metadata AI")
-st.caption("Generator Deskripsi & Keyword Otomatis untuk Shutterstock (SDK 2026)")
+st.caption("Generator Deskripsi & Keyword Otomatis untuk Shutterstock")
 
-# API Key Anda yang sudah aktif
+# Mengambil API Key secara aman dari Brankas Secrets Streamlit
 if "GEMINI_API_KEY" in st.secrets:
     API_KEY = st.secrets["GEMINI_API_KEY"]
 else:
-    # Jika dijalankan di laptop tanpa secrets, Anda bisa input lewat sidebar browser
     API_KEY = st.sidebar.text_input("Masukkan Gemini API Key:", type="password")
 
 if API_KEY:
@@ -32,7 +31,7 @@ if API_KEY:
             st.video(file)
 
         if st.button("🚀 Generate Metadata"):
-            with st.spinner("AI sedang menganalisis konten dengan Gemini 1.5 Flash..."):
+            with st.spinner("AI sedang menganalisis konten..."):
                 try:
                     # Menggunakan Client SDK Baru
                     client = genai.Client(api_key=API_KEY)
@@ -48,7 +47,6 @@ if API_KEY:
                     KEYWORDS: [put keywords here]
                     """
                     
-                    # Proses berdasarkan tipe media menggunakan model terbaru
                     if option == "Gambar":
                         img = Image.open(file)
                         response = client.models.generate_content(
@@ -75,7 +73,6 @@ if API_KEY:
 
                     st.success("Analisis Selesai!")
                     
-                    # Kotak output dengan tombol salin instan
                     st.subheader("📝 Title (Copy Below)")
                     st.code(title, language=None)
                     
@@ -84,3 +81,5 @@ if API_KEY:
                     
                 except Exception as e:
                     st.error(f"Terjadi kesalahan sistem: {e}")
+else:
+    st.warning("Silakan masukkan API Key Anda di menu sidebar untuk memulai.")
