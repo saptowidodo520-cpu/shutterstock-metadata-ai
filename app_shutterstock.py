@@ -1,88 +1,34 @@
 import streamlit as st
 from google import genai
-import google.genai.types as types
 from PIL import Image
 
-# 1. Konfigurasi Halaman
 st.set_page_config(page_title="Stock Metadata AI", layout="centered")
+st.title("📸 Stock Metadata AI (Mode Diagnosis)")
+st.caption("Uji Coba Jalur Langsung Tanpa Brankas Secrets")
 
-st.title("📸 Stock Metadata AI")
-st.caption("Generator Deskripsi & Keyword Otomatis untuk Shutterstock")
-
-# Sistem Keamanan: Mengambil API Key murni dari Brankas Secrets Streamlit Cloud
-if "GEMINI_API_KEY" in st.secrets:
-    API_KEY = st.secrets["GEMINI_API_KEY"]
-else:
-    API_KEY = st.sidebar.text_input("Masukkan Gemini API Key:", type="password")
+# Kita munculkan kotak input terbuka (tanpa sensor) agar hurufnya bisa dicek manual
+API_KEY = st.text_input("PASTE API KEY JALUR PRIBADI ANDA DI SINI:", type="default")
 
 if API_KEY:
-    # 🔍 FITUR DETEKSI: Menampilkan potongan kunci yang sedang aktif di sistem
-    st.info(f"🔑 Kunci Aktif di Sistem: `{API_KEY[:6]}...{API_KEY[-4:] if len(API_KEY) > 4 else ''}`")
-
-    # Pilih Tipe Media
-    option = st.radio("Pilih Tipe Media:", ["Gambar", "Video"])
+    st.info(f"Status Kunci -> Panjang: {len(API_KEY)} karakter | Awalan: {API_KEY[:6]}...")
     
-    if option == "Gambar":
-        file = st.file_uploader("Upload Foto", type=["jpg", "jpeg", "png"])
-    else:
-        file = st.file_uploader("Upload Video", type=["mp4", "mov", "avi"])
-
+    file = st.file_uploader("Upload Foto", type=["jpg", "jpeg", "png"])
     if file:
-        if option == "Gambar":
-            st.image(file, use_column_width=True)
-        else:
-            st.video(file)
-
-        if st.button("🚀 Generate Metadata"):
-            with st.spinner("AI sedang menganalisis konten..."):
+        st.image(file, use_column_width=True)
+        
+        if st.button("🚀 Test Tembus Google"):
+            with st.spinner("Sedang mengetuk pintu server Google..."):
                 try:
-                    # Menggunakan Client SDK Terbaru dengan pembersihan spasi
+                    # Jalur pintas langsung menggunakan kunci dari kotak teks
                     client = genai.Client(api_key=API_KEY.strip())
                     
-                    prompt = """
-                    You are an expert Stock Photography and Video SEO Specialist. 
-                    Analyze the uploaded file and provide:
-                    1. Description (Title): 7-15 words, SEO-friendly, English, commercial context, no subjective words.
-                    2. Keywords: Exactly 50 relevant keywords, English, comma-separated, covering main subject, activity, environment, and abstract concepts.
-                    
-                    Strictly format the output as follows:
-                    TITLE: [put title here]
-                    KEYWORDS: [put keywords here]
-                    """
-                    
-                    if option == "Gambar":
-                        img = Image.open(file)
-                        response = client.models.generate_content(
-                            model='gemini-1.5-flash',
-                            contents=[prompt, img]
-                        )
-                    else:
-                        video_bytes = file.read()
-                        video_part = types.Part.from_bytes(data=video_bytes, mime_type="video/mp4")
-                        response = client.models.generate_content(
-                            model='gemini-1.5-flash',
-                            contents=[prompt, video_part]
-                        )
-                    
-                    res_text = response.text
-                    
-                    # Parsing Hasil Title dan Keywords
-                    try:
-                        title = res_text.split("TITLE:")[1].split("KEYWORDS:")[0].strip()
-                        keywords = res_text.split("KEYWORDS:")[1].strip()
-                    except:
-                        title = "Gagal memproses judul otomatis."
-                        keywords = res_text
-
-                    st.success("Analisis Selesai!")
-                    
-                    st.subheader("📝 Title (Copy Below)")
-                    st.code(title, language=None)
-                    
-                    st.subheader("🔑 Keywords (Copy Below)")
-                    st.code(keywords, language=None)
-                    
+                    response = client.models.generate_content(
+                        model='gemini-1.5-flash',
+                        contents=["Respond with exactly one word: Success", Image.open(file)]
+                    )
+                    st.success(f"🎉 LUAR BIASA BERHASIL! Respon Google: {response.text}")
+                    st.balloons()
                 except Exception as e:
-                    st.error(f"Terjadi kesalahan sistem: {e}")
+                    st.error(f"Google menolak di pintu depan karena: {e}")
 else:
-    st.warning("Silakan masukkan API Key Anda di menu sidebar untuk memulai.")
+    st.warning("Silakan tempel (paste) API Key gres Anda pada kotak di atas untuk memulai tes.")
