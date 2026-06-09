@@ -32,7 +32,7 @@ if API_KEY:
             st.video(file)
 
         if st.button("🚀 Generate Metadata"):
-            with st.spinner("AI sedang menganalisis konten dengan Gemini 2.5 Flash..."):
+            with st.spinner("AI sedang menganalisis konten dengan Gemini 1.5 Flash..."):
                 try:
                     # Menggunakan Client SDK Baru
                     client = genai.Client(api_key=API_KEY)
@@ -52,14 +52,14 @@ if API_KEY:
                     if option == "Gambar":
                         img = Image.open(file)
                         response = client.models.generate_content(
-                            model='gemini-2.5-flash',
+                            model='gemini-1.5-flash',
                             contents=[prompt, img]
                         )
                     else:
                         video_bytes = file.read()
                         video_part = types.Part.from_bytes(data=video_bytes, mime_type="video/mp4")
                         response = client.models.generate_content(
-                            model='gemini-2.5-flash',
+                            model='gemini-1.5-flash',
                             contents=[prompt, video_part]
                         )
                     
